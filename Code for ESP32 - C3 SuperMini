@@ -1,0 +1,78 @@
+#include <BluetoothSerial.h>
+
+// Define pins
+#define LED_PIN 2       // LED indicator
+#define BUZZER_PIN 15   // Buzzer
+#define BATTERY_PIN 34  // Simulated battery level input
+
+// Bluetooth object
+BluetoothSerial SerialBT;
+
+// Variables
+bool isFinding = false;
+
+void setup() {
+  // Initialize serial communication
+  Serial.begin(115200);
+  
+  // Initialize Bluetooth
+  SerialBT.begin("SmartKeychain");  // Bluetooth device name
+  Serial.println("Bluetooth Device is Ready to Pair.");
+
+  // Set pin modes
+  pinMode(LED_PIN, OUTPUT);
+  pinMode(BUZZER_PIN, OUTPUT);
+  pinMode(BATTERY_PIN, INPUT);
+
+  // Turn off LED and buzzer initially
+  digitalWrite(LED_PIN, LOW);
+  digitalWrite(BUZZER_PIN, LOW);
+}
+
+void loop() {
+  // Bluetooth data handling
+  if (SerialBT.available()) {
+    String command = SerialBT.readStringUntil('\n');
+    command.trim(); // Remove extra whitespace
+    
+    if (command == "FIND") {
+      startFinding();
+    } else if (command == "STOP") {
+      stopFinding();
+    } else {
+      Serial.println("Invalid Command Received.");
+    }
+  }
+
+  // Simulate low battery warning
+  int batteryLevel = analogRead(BATTERY_PIN);
+  if (batteryLevel < 1000) { // Example threshold
+    Serial.println("Low Battery Warning!");
+    blinkLED(3, 200); // Blink LED 3 times
+  }
+
+  delay(100); // Short delay for stability
+}
+
+void startFinding() {
+  Serial.println("Finding Keychain...");
+  isFinding = true;
+  digitalWrite(LED_PIN, HIGH);
+  tone(BUZZER_PIN, 1000); // Play buzzer sound
+}
+
+void stopFinding() {
+  Serial.println("Stopping Locator...");
+  isFinding = false;
+  digitalWrite(LED_PIN, LOW);
+  noTone(BUZZER_PIN); // Stop buzzer sound
+}
+
+void blinkLED(int times, int duration) {
+  for (int i = 0; i < times; i++) {
+    digitalWrite(LED_PIN, HIGH);
+    delay(duration);
+    digitalWrite(LED_PIN, LOW);
+    delay(duration);
+  }
+}
