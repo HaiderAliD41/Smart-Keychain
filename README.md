@@ -23,7 +23,3 @@ The **Smart Keychain** is a compact and innovative device designed to enhance th
 2. **Locator Feature**: Use the mobile app to trigger the locator, activating the buzzer and LED for easy detection.  
 3. **Notification System**: The LED blinks for connectivity status, low battery warnings, or notifications.  
 
-## Setup and Usage  
-1. Clone the repository:  
-   ```bash
-   git clone https://github.com/yourusername/smart-keychain.git
